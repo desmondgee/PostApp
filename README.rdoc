@@ -8,7 +8,7 @@ A server that allows for creating users, posts, comments, and image links availa
 
 The available endpoints are as follows:
 
---Reports
+==== Reports
 
 GET /city_report?city=$CITY - Gets all posts and comments for city sorted by last updated last. type can be "posts" or "comments".
  * Return format:
@@ -29,7 +29,7 @@ GET /city_report?city=$CITY - Gets all posts and comments for city sorted by las
     }
 
 
--- Users
+==== Users
 
 POST /users - Used to create users. Supports formats -
  * Create single user, {users: {name:$NAME, city:$CITY}}
@@ -37,7 +37,7 @@ POST /users - Used to create users. Supports formats -
  * Returns user in same format, but with addition of id.
  
  
--- Posts
+==== Posts
 
 POST /posts - Create one or more posts.
  * Create single user parameters,
@@ -84,7 +84,7 @@ PUT /posts - Updates information on one or more posts.
 DELETE /posts/:id1,id2,id3,.. - Deletes posts with given ids.
     
     
--- Comments
+==== Comments
     
 POST /comments - Creates one or more comments. $COMMENTID is used for nesting. Leave as null to use post as parent.
  * Create single comment parameters,
@@ -109,7 +109,7 @@ GET /comments/:id1,:id2,.. - Returns one or more comments.
 PUT /comments - Updates one or more comments.
  * Update using same format as creating comment return format
   
--- Images
+==== Images
   
 POST /images - Used to create image references.
  * Takes parameters as, {images: {src:$SRC, links:{posts:$POSTID}}}
