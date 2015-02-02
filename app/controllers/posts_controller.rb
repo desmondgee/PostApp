@@ -58,7 +58,7 @@ class PostsController < ApplicationController
       image_urls: p.images.map {|i| i.src}
     }}
     
-    render json: {posts: posts}, status: 204
+    render json: posts, status: 204
   end
   
   # GET /posts/:id/comments
