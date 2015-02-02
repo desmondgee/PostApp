@@ -1,28 +1,123 @@
-== README
+== PostApp
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Built on Ruby 2.1.3 and Rails 4.2.0 with SQLite as database.
 
-Things you may want to cover:
+A server that allows for creating users, posts, comments, and image links available through JSON API endpoints.  Comments can be attached to posts or in reply to other comments.
 
-* Ruby version
+== Endpoints
 
-* System dependencies
+The available endpoints are as follows:
 
-* Configuration
+==== Reports
 
-* Database creation
+GET /city_report?city=$CITY - Gets all posts and comments for city sorted by last updated last. type can be "posts" or "comments".
+ * Return format:
+    {
+      activities: {
+        id: $ID,
+        type: $TYPE,
+        title: $TITLE,
+        content: $CONTENT,
+        message: $MESSAGE,
+        links: {
+          users: $USERID,
+          posts: $POSTID,
+          images: [$IMG1ID, $IMG2ID, $IMG3ID, ..],
+          comments: [$COMMENTID1, $COMMENTID2, $COMMENTID3, ..] or $COMMENTID
+        }
+      }
+    }
 
-* Database initialization
 
-* How to run the test suite
+==== Users
 
-* Services (job queues, cache servers, search engines, etc.)
+POST /users - Used to create users. Supports formats -
+ * Create single user, {users: {name:$NAME, city:$CITY}}
+ * Create multiple users, {users: [{name:$NAME1, city:$CITY1}, {name:$NAME2, city:$CITY2}]}
+ * Returns user in same format, but with addition of id.
+ 
+ 
+==== Posts
 
-* Deployment instructions
+POST /posts - Create one or more posts.
+ * Create single user parameters,
+    {
+      posts: {
+        title: $TITLE,
+        content: $CONTENT,
+        links: {
+          users: $USERID,
+          images: [$IMG1ID, $IMG2ID, $IMG3ID, ..],
+          comments: [$COMMENTID1, $COMMENTID2, $COMMENTID3, ..]
+        }
+      }
+    }
+  * Create multiple users parameters: {posts: [{title:$TITLE1,..},{..},{..},..]}
+  * Return format is same as given format, but with addition of id.
+        
 
-* ...
+GET /posts/:id - Gets post with given :id.
+ * Return format is same as create post return format.
+    
+GET /posts/:id1,id2,:id3,.. - Gets and returns posts with the given any number of ids more than one.
+ * Return format: {posts: [{id:id1,..},{id:id2,..},{id:id3,..}]}
+ 
+GET /posts/:id/links/comments - Gets all of the comments for post whose id is :id
+ * Return format: (same as GET /comments with multiple)
+ 
+GET /list_posts/:id - Returns 20 most recent posts in a special format:
+ * Return format:
+    [$POST1,$POST2,$POST3,..] where each $POSTN is
+    
+    {
+      id: $ID,
+      title: $TITLE,
+      author_name: $AUTHOR_NAME,
+      author_city: $AUTHOR_CITY,
+      image_urls: [$IMG1URL, $IMG2URL, ..]
+    }
+      
+    
+PUT /posts - Updates information on one or more posts.
+ * Update using same parameters as create post return formats.
+
+DELETE /posts/:id1,id2,id3,.. - Deletes posts with given ids.
+    
+    
+==== Comments
+    
+POST /comments - Creates one or more comments. $COMMENTID is used for nesting. Leave as null to use post as parent.
+ * Create single comment parameters,
+    {
+      comments: {
+        message: $MESSAGE,
+        links: {
+          users: $USERID,
+          posts: $POSTID,
+          comments: $COMMENTID
+        }
+      }
+    }
+ * Create multiple comments parameters, {comments: [{message:$MSG1,..},{..},{..},..]}
+ * Returns same format as given but with ids.
+
+ 
+GET /comments/:id1,:id2,.. - Returns one or more comments.
+ * Returns same format as creating comment return format.
+  
+  
+PUT /comments - Updates one or more comments.
+ * Update using same format as creating comment return format
+  
+==== Images
+  
+POST /images - Used to create image references.
+ * Takes parameters as, {images: {src:$SRC, links:{posts:$POSTID}}}
+ * Returns image in same format, but with addition of id.
+  
+DELETE /images/:id - Deletes the image with given id.
 
 
-Please feel free to use a different markup language if you do not plan to run
-<tt>rake doc:app</tt>.
+== Test Cases
+
+62 test cases have been created and can be run through rspec. The majority of the test cases are controller specs.
